@@ -163,10 +163,12 @@ void read_scp(char *filename) {
   nrow = (int *) mymalloc(n*sizeof(int));
   k    = (int *) mymalloc(n*sizeof(int));
   for (j=0; j<n; j++) nrow[j]=0;
+
   for (i=0; i<m; i++) {
     for (h=0; h<ncol[i]; h++)
       nrow[col[i][h]]++;
   }
+  
   for (j=0; j<n; j++) {
     row[j] = (int *) mymalloc(nrow[j]*sizeof(int));
     k[j]   = 0;
