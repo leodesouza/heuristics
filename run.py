@@ -2,6 +2,7 @@ import os
 import sys
 
 from algorithms.scp import Scp
+from algorithms.setcover.constructive import Randomized
 
 
 def main(argv):
@@ -26,8 +27,26 @@ def main(argv):
     scp = Scp()
     scp.open_file(scp_file)
     scp.print_instance(1)
+
+
 # read parameters
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    # main(sys.argv)
+
+    # elements = {1, 2, 3, 4, 5, 6, 7}
+    # sets = {
+    #     'A': {1, 2, 3},
+    #     'B': {2, 4, 5},
+    #     'C': {1, 4, 6},
+    #     'D': {3, 5, 7}
+    # }
+    # rd = Randomized()
+    # result = rd.set_cover(elements, sets)
+
+    import itertools
+    mylist = [1, 2, 3]
+    permu = itertools.permutations(mylist)
+    print(list(permu))
+
