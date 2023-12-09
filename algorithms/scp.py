@@ -1,7 +1,6 @@
 import re
 
 
-
 class Scp:
     def __init__(self):
         self.seed = 1234567
@@ -80,9 +79,12 @@ class Scp:
             print('COLUMN COST')
             print(' '.join(map(str, self.cost)))
             print()
-            print(f'NUMBER OF ROWS COVERED BY COLUMN 1 is {self.nrow[0]}')
+            print(f'NUMBER OF ELEMENTS COVERED BY SUBSET 1 is {self.nrow[0]}')
             print(' '.join(map(str, self.rows[0])))
-            print(f'NUMBER OF COLUMNS COVERING ROW 1 is {self.ncol[0]}')
+            print(f'NUMBER OF SUBSETS COVERING ELEMENT 1 is {self.ncol[0]}')
             print(' '.join(map(str, self.col[0])))
             print()
         print('*************************************************\n')
+
+    def get_instance(self):
+        return self.rows

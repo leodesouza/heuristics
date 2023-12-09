@@ -2,38 +2,35 @@ import random
 from utils import generate_rand_permutation
 
 
-def create_randomized_constructive(conjuntos):
-    m = len(conjuntos)
-    re = generate_rand_permutation(m)
+def create_randomized_constructive(scp_sets_instance):
+    m = len(scp_sets_instance)
+    generated_randon_permutation = generate_rand_permutation(m)
 
     # Inicializa variáveis
     c = 0  # Variável de controle de elementos cobertos
     solucao = []  # Lista para armazenar a solução
-    iter_re = iter(re)
+    rand_permutation = iter(generated_randon_permutation)
     # Enquanto c for diferente do total de m elementos
     while c < m:
-        # Pega o próximo elemento não coberto de re
-        elemento = next((x for x in iter_re if x not in solucao), None)
+        # Pega o próximo elemento não coberto de rand_permutation
+        not_covered_element = next((x for x in rand_permutation if x not in solucao), None)
 
-        if elemento is not None:
-            # Gera permutação p com os subconjuntos que cobrem o elemento
-            conjuntos_cobrem_elemento = [s for s in conjuntos if elemento in s]
-            random.shuffle(conjuntos_cobrem_elemento)
+        if not_covered_element is not None:
+            # Gera permutação com os subconjuntos que cobrem o elemento
+            sets_that_cover_element = [s for s in scp_sets_instance if not_covered_element in s]
+            random.shuffle(sets_that_cover_element)
 
-            # Seleciona o primeiro subconjunto s que cobre o elemento
-            s = conjuntos_cobrem_elemento[0]
+            # Seleciona o primeiro subconjunto que cobre o elemento
+            s = sets_that_cover_element[0]
+            c += 1
 
             # Verifica se s cobre outros elementos não cobertos e atualiza c
-            found = False
             for e in s:
-                for item in solucao:
-                    if e in item:
-                        found = True
-                if not found:
-                    c += 1
-            # Coloca subconjunto s na solução e atualiza solução
+                if e != not_covered_element:
+                    found = any(e in sublist for sublist in solucao)
+                    if not found:
+                        c += 1
             solucao.append(s)
-
         else:
             break  # Todos os elementos foram cobertos
 
