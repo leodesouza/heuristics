@@ -86,5 +86,6 @@ class Scp:
             print()
         print('*************************************************\n')
 
-    def get_instance(self):
-        return self.rows
+    def get_subets_and_costs(self):
+        subs_and_costs = [(self.rows[i], self.cost[i]) for i in range(len(self.rows))]
+        return subs_and_costs

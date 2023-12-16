@@ -28,22 +28,22 @@ def main(argv):
     scp.open_file(scp_file)
 
     # scp.print_instance(1)
-    scp_instance = scp.get_instance()
+    subsets_and_costs = scp.get_subets_and_costs()
     print(f'SCP instance from file: {file_name}')
-    print(scp_instance)
+    print(subsets_and_costs)
     print()
     print('#randomized constructive solution')
-    solution = create_randomized_constructive(scp_instance)
-    print(solution)
+    solution, total_cost = create_randomized_constructive(subsets_and_costs)
+    print(f"Solution: {solution} and total cost: {total_cost}")
     print("\n")
 
     print('#greedy constructive solution')
-    solution = create_greedy_constructive(scp_instance)
+    solution = create_greedy_constructive(subsets_and_costs)
     print(solution)
     print("\n")
 
     print('#weighted greey constructive solution')
-    solution = create_wighted_greedy_constructive(scp_instance)
+    solution = create_wighted_greedy_constructive(subsets)
     print(solution)
 
 
