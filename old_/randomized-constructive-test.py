@@ -1,5 +1,5 @@
 import random
-from utils import generate_rand_permutation
+from algorithms.utils.pseudo_random_generator import generate_rand_permutation
 
 
 def algoritmo_construtivo_aleatorizado(m, conjuntos):

@@ -1,11 +1,14 @@
 import random
-from utils import generate_rand_permutation
+from algorithms.utils.pseudo_random_generator import generate_rand_permutation, create_index
 
 
 def create_randomized_constructive(scp_sets_instance):
-    m = len(scp_sets_instance)
-    generated_randon_permutation = generate_rand_permutation(m)
+    elements = set()
+    for subSet in scp_sets_instance:
+        elements.update(subSet)
 
+    shuffled_vector = generate_rand_permutation(len(elements))
+    c = 0
     # Inicializa variáveis
     c = 0  # Variável de controle de elementos cobertos
     solucao = []  # Lista para armazenar a solução

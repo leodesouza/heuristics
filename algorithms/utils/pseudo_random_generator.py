@@ -50,14 +50,14 @@ def lecuyer_rando():
 
 
 # ********* Returns a random integer between low and high (included) ***********/
-def unif(low, high):
+def create_index(low, high):
     return low + int((high - low + 1) * lecuyer_rando())
 
 
 def generate_rand_permutation(n):
     p = [i for i in range(n)]
     for i in range(n - 1):
-        random_index = unif(i, n - 1)
+        random_index = create_index(i, n - 1)
         p[i], p[random_index] = p[random_index], p[i]
     return p
 

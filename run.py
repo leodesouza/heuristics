@@ -32,7 +32,7 @@ def main(argv):
     print(f'SCP instance from file: {file_name}')
     print(scp_instance)
     print()
-    print('#randomized constructive solution--')
+    print('#randomized constructive solution')
     solution = create_randomized_constructive(scp_instance)
     print(solution)
     print("\n")
