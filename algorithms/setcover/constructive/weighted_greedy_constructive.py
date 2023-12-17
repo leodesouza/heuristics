@@ -1,48 +1,29 @@
-def create_wighted_greedy_constructive(subconjuntos):
-    elementos_cobertos = set()
-    elementos_restantes = set()
-    for subconjunto in subconjuntos:
-        elementos_restantes.update(subconjunto)
+def create_wighted_greedy_constructive(subsets_and_costs):
+    elements = set()
+    for subSet in subsets_and_costs:
+        elements.update(subSet[0])
 
-    num_elementos_cobertos = 0
-    solucao = []
-    subconjuntos_ordenados = []
+    number_elements = len(list(elements))
+    number_of_covered = 0
+    solution = []
+    lower_cost = 0
+    # cover_cost = 0
+    subsets_cost_per_cover = []
+    for sub in subsets_and_costs:
+        lower_number = min(len(sub[0]), sub[1])
+        bigger_number = max(len(sub[0]), sub[1])
+        cover_cost = bigger_number / lower_number
+        subsets_cost_per_cover.append((sub[0], cover_cost))
 
-    for subconjunto in subconjuntos:
-        custo_cobertura = len(subconjunto) / len(set(subconjunto) - elementos_cobertos)
-        subconjuntos_ordenados.append((custo_cobertura, subconjunto))
+    subsets_cost_per_cover = iter(sorted(subsets_cost_per_cover, key=lambda x: x[1]))
 
-    subconjuntos_ordenados.sort(key=lambda x: x[0])
+    while number_of_covered < number_elements:
+        current_subset = next(subsets_cost_per_cover)
+        for element in current_subset[0]:
+            found = any(element in sublist for sublist in solution)
+            if not found:
+                number_of_covered += 1
 
-    while elementos_restantes:
-        menor_subconjunto = None
-        menor_custo = float('inf')
-        for subconjunto in subconjuntos_ordenados:
-            custo_cobertura, conjunto = subconjunto
-            if custo_cobertura < menor_custo and any(elem not in elementos_cobertos for elem in conjunto):
-                menor_custo = custo_cobertura
-                menor_subconjunto = conjunto
+        solution.append((current_subset[0], int(len(current_subset[0]) * current_subset[1])))
 
-        elementos_cobertos.update(menor_subconjunto)
-        for elem in menor_subconjunto:
-            elementos_restantes.discard(elem)
-        num_elementos_cobertos += len(menor_subconjunto)
-        solucao.append(menor_subconjunto)
-
-    return solucao, num_elementos_cobertos
-
-# Exemplo de uso
-# subconjuntos = [
-#     [1, 2, 3],  # Custo: 6, Número de elementos: 3
-#     [2, 4],     # Custo: 6, Número de elementos: 2
-#     [1, 3, 5],  # Custo: 9, Número de elementos: 3
-#     [4, 5]      # Custo: 9, Número de elementos: 2
-# ]
-#
-# solucao, num_elementos_cobertos = construtivo_guloso_custo_cobertura(subconjuntos)
-#
-# print("Solução encontrada:")
-# for subconjunto in solucao:
-#     print(subconjunto)
-#
-# print("\nNúmero de elementos cobertos:", num_elementos_cobertos)
+    return solution, sum(sub[1] for sub in solution)

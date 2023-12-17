@@ -1,5 +1,4 @@
-import random
-from algorithms.utils.pseudo_random_generator import generate_rand_permutation, create_index
+from algorithms.utils.pseudo_random_generator import generate_rand_permutation
 
 
 def create_randomized_constructive(subsets_and_costs):
@@ -12,7 +11,7 @@ def create_randomized_constructive(subsets_and_costs):
     number_of_covered = 0
     solution = []
     number_elements = len(elements)
-    total_cost = 0
+
     while number_of_covered < number_elements:
         random_index = next(shuffled_vector)
         current = elements[random_index]
@@ -29,6 +28,4 @@ def create_randomized_constructive(subsets_and_costs):
                     number_of_covered += 1
         solution.append(local_solution)
 
-    total_cost = sum(sub[1] for sub in solution)
-
-    return solution, total_cost
+    return solution, sum(sub[1] for sub in solution)

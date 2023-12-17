@@ -38,13 +38,13 @@ def main(argv):
     print("\n")
 
     print('#greedy constructive solution')
-    solution = create_greedy_constructive(subsets_and_costs)
-    print(solution)
+    solution, total_cost = create_greedy_constructive(subsets_and_costs)
+    print(solution, total_cost)
     print("\n")
 
     print('#weighted greey constructive solution')
-    solution = create_wighted_greedy_constructive(subsets)
-    print(solution)
+    solution, total_cost = create_wighted_greedy_constructive(subsets_and_costs)
+    print(solution, total_cost)
 
 
 if __name__ == '__main__':

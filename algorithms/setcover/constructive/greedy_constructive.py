@@ -1,43 +1,21 @@
-def create_greedy_constructive(subconjuntos):
-    elementos_cobertos = set()
-    elementos_restantes = set()
-    for subconjunto in subconjuntos:
-        elementos_restantes.update(subconjunto)
 
-    num_elementos_cobertos = 0
-    solucao = []
+def create_greedy_constructive(subsets_and_costs):
+    elements = set()
+    for subSet in subsets_and_costs:
+        elements.update(subSet[0])
 
-    subconjuntos_ordenados = sorted(subconjuntos, key=lambda x: sum(x))
+    number_elements = len(list(elements))
+    number_of_covered = 0
+    solution = []
+    ordered_subsets = iter(sorted(subsets_and_costs, key=lambda x: x[1]))
 
-    while elementos_restantes:
-        menor_subconjunto = None
-        menor_custo = float('inf')
-        for subconjunto in subconjuntos_ordenados:
-            custo_subconjunto = sum(subconjunto)
-            if custo_subconjunto < menor_custo and any(elem not in elementos_cobertos for elem in subconjunto):
-                menor_custo = custo_subconjunto
-                menor_subconjunto = subconjunto
+    while number_of_covered < number_elements:
+        current_subset = next(ordered_subsets)
+        for element in current_subset[0]:
+            found = any(element in sublist for sublist in solution)
+            if not found:
+                number_of_covered += 1
 
-        elementos_cobertos.update(menor_subconjunto)
-        for elem in menor_subconjunto:
-            elementos_restantes.discard(elem)
-        num_elementos_cobertos += len(menor_subconjunto)
-        solucao.append(menor_subconjunto)
+        solution.append(current_subset)
 
-    return solucao, num_elementos_cobertos
-
-# Exemplo de uso
-# subconjuntos = [
-#     [1, 2, 3],  # Custo: 6
-#     [2, 4],  # Custo: 6
-#     [1, 3, 5],  # Custo: 9
-#     [4, 5]  # Custo: 9
-# ]
-#
-# solucao, num_elementos_cobertos = construtivo_guloso(subconjuntos)
-#
-# print("Solução encontrada:")
-# for subconjunto in solucao:
-#     print(subconjunto)
-#
-# print("\nNúmero de elementos cobertos:", num_elementos_cobertos)
+    return solution, sum(sub[1] for sub in solution)
