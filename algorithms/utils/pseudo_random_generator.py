@@ -1,7 +1,11 @@
 # *************** L'Ecuyer random number generator ***************
 # pseudo random number generator
 
-def lecuyer_rando():
+def get_pseudo_random_used():
+    return lecuyer_rando()
+
+
+def lecuyer_rando(seed):
     m = 2147483647
     m2 = 2145483479
     a12, q12, r12 = 63308, 33921, 12979
@@ -50,14 +54,14 @@ def lecuyer_rando():
 
 
 # ********* Returns a random integer between low and high (included) ***********/
-def create_index(low, high):
-    return low + int((high - low + 1) * lecuyer_rando())
+def create_index(low, high, pseudo_random):
+    return low + int((high - low + 1) * pseudo_random)
 
 
-def generate_rand_permutation(n):
+def generate_rand_permutation(n, pseudo_random):
     p = [i for i in range(n)]
     for i in range(n - 1):
-        random_index = create_index(i, n - 1)
+        random_index = create_index(i, n - 1, pseudo_random)
         p[i], p[random_index] = p[random_index], p[i]
     return p
 

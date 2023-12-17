@@ -1,91 +1,122 @@
-import re
+import os
+import time
+from algorithms.setcover.constructive import randomized_constructive, greedy_constructive, weighted_greedy_constructive
+from algorithms.config import Parameters
+from algorithms.utils.pseudo_random_generator import lecuyer_rando
+
+
+def write_to_file(instance_name, method_name, pseudo_random_generated, total_cost, cpu_time, output_file):
+    with open(output_file, 'a', newline='') as file:
+        file.write(f'{instance_name};{method_name};{pseudo_random_generated};{total_cost};{cpu_time}')
 
 
 class Scp:
-    def __init__(self):
-        self.seed = 1234567
-        self.scp_file = ""
-        self.output_file = "output.txt"
 
-        # Instance static variables
-        self.n = 0
-        self.m = 0
-        self.rows = []  # rows[i] that are covered by column i
-        self.col = []  # col[i] columns that cover row i
-        self.ncol = []  # ncol[i] number of columns that cover row i
-        self.nrow = []  # nrow[i] number of rows that are covered by column i
-        self.cost = []  # cost[i] cost of column i
+    def process_instances(self, parameters: Parameters):
 
-        # solution variables
-        x = []
-        y = []
-        fx = 0  # sum of the cost of the columns selected in the solution
+        files = os.listdir(parameters.target_dir)
+        pseudo_random_generated = 0
+        for file_name in files:
+            if file_name == parameters.output_file:
+                continue
 
-        # Dynamic variables
-        col_cover = []
-        ncol_cover = 0
+            file_path = os.path.join(parameters.target_dir, file_name)
+            subsets = self.get_subsets(file_path)
+            results = [([], 0)]  # list of all subsets with [([sub], cost)]
+            constructive_method_name = ''
+            # ** Start CPU Time **
+            start_cpu_time = time.process_time()
+            if 'hc1' in parameters.options:
+                constructive_method_name = 'HC1'
+                pseudo_random_generated = lecuyer_rando(parameters.seed)
+                result = randomized_constructive.create_randomized_constructive(subsets, pseudo_random_generated)
+            elif 'hc2' in parameters.options:
+                constructive_method_name = 'HC2'
+                result = greedy_constructive.create_greedy_constructive(subsets)
+            elif 'hc3' in parameters.options:
+                constructive_method_name = 'HC3'
+                result = weighted_greedy_constructive.create_wighted_greedy_constructive(subsets)
+            elif 're' in parameters.options:
+                pass
+            end_cpu_time = time.process_time()
+            cpu_executation_time = (start_cpu_time - end_cpu_time)
+            # ** End CPU Time **
 
-    def open_file(self, scp_file):
-        self.scp_file = scp_file
+            output_file = os.path.join(parameters.target_dir, parameters.output_file)
+            file_name, extension = os.path.splitext(file_name)
+            write_to_file(file_name, constructive_method_name, pseudo_random_generated, result[1], cpu_executation_time, output_file)
+
+    @staticmethod
+    def get_subsets(scp_file):
+        n = 0
+        m = 0
+        rows = []  # rows[i] that are covered by column i
+        col = []  # col[i] columns that cover row i
+        ncol = []  # ncol[i] number of columns that cover row i
+        nrow = []  # nrow[i] number of rows that are covered by column i
+        cost = []  # cost[i] cost of column i
+        scp_file = scp_file
         with open(scp_file, 'r') as file:
 
             rows_columns_number = list(map(int, file.readline().split()))
 
-            self.m = rows_columns_number[0]  # number of rows
-            self.n = rows_columns_number[1]  # number of columns
+            m = rows_columns_number[0]  # number of rows
+            n = rows_columns_number[1]  # number of columns
 
             # cost of all columns
-            self.cost = list(map(int, file.readline().split()))
+            cost = list(map(int, file.readline().split()))
 
             # Info of the columns that cover each row
-            for i in range(self.m):
+            for i in range(m):
 
                 ncol_i = int(file.readline().strip())
-                self.ncol.append(ncol_i)
+                ncol.append(ncol_i)
 
                 col_i = list(map(int, file.readline().split()))
                 if len(col_i) != ncol_i:
                     # throws an exception
                     pass
-                self.col.append([x - 1 for x in col_i])
+                col.append([x - 1 for x in col_i])
 
             # Info of rows that are covered by each column
-            self.rows = [[] for _ in range(self.n)]
-            self.nrow = [0] * self.n
-            k = [0] * self.n
+            rows = [[] for _ in range(n)]
+            nrow = [0] * n
+            k = [0] * n
 
-            for i in range(self.m):
-                for h in range(self.ncol[i]):
-                    self.nrow[self.col[i][h]] += 1
+            for i in range(m):
+                for h in range(ncol[i]):
+                    nrow[col[i][h]] += 1
 
-            for j in range(self.n):
-                self.rows[j] = [0] * self.nrow[j]
+            for j in range(n):
+                rows[j] = [0] * nrow[j]
                 k[j] = 0
 
-            for i in range(self.m):
-                for h in range(self.ncol[i]):
-                    self.rows[self.col[i][h]][k[self.col[i][h]]] = i
-                    k[self.col[i][h]] += 1
+            for i in range(m):
+                for h in range(ncol[i]):
+                    rows[col[i][h]][k[col[i][h]]] = i
+                    k[col[i][h]] += 1
 
-    def print_instance(self, level):
-        print('************************************************')
-        print(f'SCP INSTANCE {self.scp_file}')
-        print()
-        print('PROBLEM SIZE')
-        print(f'm = {self.m}\t n = {self.n}')
-        print()
-
-        if level >= 1:
-            print('COLUMN COST')
-            print(' '.join(map(str, self.cost)))
-            print()
-            print(f'NUMBER OF ELEMENTS COVERED BY SUBSET 1 is {self.nrow[0]}')
-            print(' '.join(map(str, self.rows[0])))
-            print(f'NUMBER OF SUBSETS COVERING ELEMENT 1 is {self.ncol[0]}')
-            print(' '.join(map(str, self.col[0])))
-            print()
-        print('*************************************************\n')
+        return [(rows[i], cost[i]) for i in range(len(rows))]
 
     def get_subets_and_costs(self):
         subs_and_costs = [(self.rows[i], self.cost[i]) for i in range(len(self.rows))]
         return subs_and_costs
+
+    # def print_instance(self, level):
+    #     print('************************************************')
+    #     print(f'SCP INSTANCE {self.scp_file}')
+    #     print()
+    #     print('PROBLEM SIZE')
+    #     print(f'm = {self.m}\t n = {self.n}')
+    #     print()
+    #
+    #     if level >= 1:
+    #         print('COLUMN COST')
+    #         print(' '.join(map(str, self.cost)))
+    #         print()
+    #         print(f'NUMBER OF ELEMENTS COVERED BY SUBSET 1 is {self.nrow[0]}')
+    #         print(' '.join(map(str, self.rows[0])))
+    #         print(f'NUMBER OF SUBSETS COVERING ELEMENT 1 is {self.ncol[0]}')
+    #         print(' '.join(map(str, self.col[0])))
+    #         print()
+    #     print('*************************************************\n')
