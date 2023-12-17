@@ -1,5 +1,5 @@
 class Parameters:
     seed = 0
-    target_dir = ''
+    source = ''
     output_file = ''
     options = []

@@ -1,2 +1,2 @@
 #!/bin/bash
-python run.py --seed 10 --targetDir /home/leonardosouza/projects/heuristics_files/test --output output.csv --hc1
+python run.py --seed 10 --source /home/leonardosouza/projects/heuristics_files/scp --output output.csv --hc1

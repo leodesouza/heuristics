@@ -10,7 +10,7 @@ def print_usage():
     print("\nUSAGE: run.py [param_name, param_value] [options]...\n")
     print("Parameters:")
     print("  --seed : seed to initialize random number generator")
-    print("  --targetDir: Target directory with SCP files.")
+    print("  --source: source directory with SCP files.")
     print("  --output: Filename for output results.")
     print("Options:")
     print("  --hc1: random solution construction")
@@ -30,8 +30,8 @@ def read_parameters(argv):
         if argv[i] == "--seed":
             parameters.seed = int(argv[i + 1])
             i += 2
-        elif argv[i] == "--targetDir":
-            parameters.target_dir = argv[i + 1]
+        elif argv[i] == "--source":
+            parameters.source = argv[i + 1]
             i += 2
         elif argv[i] == "--output":
             parameters.output_file = output_file = argv[i + 1]

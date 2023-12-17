@@ -6,6 +6,8 @@ def get_pseudo_random_used():
 
 
 def lecuyer_rando(seed):
+    if seed is not None and seed > 0:
+        lecuyer_rando.x12 += seed
     m = 2147483647
     m2 = 2145483479
     a12, q12, r12 = 63308, 33921, 12979

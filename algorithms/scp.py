@@ -7,20 +7,20 @@ from algorithms.utils.pseudo_random_generator import lecuyer_rando
 
 def write_to_file(instance_name, method_name, pseudo_random_generated, total_cost, cpu_time, output_file):
     with open(output_file, 'a', newline='') as file:
-        file.write(f'{instance_name};{method_name};{pseudo_random_generated};{total_cost};{cpu_time}')
+        file.writelines(f'{instance_name};{method_name};{pseudo_random_generated};{total_cost};{cpu_time}\n')
 
 
 class Scp:
 
     def process_instances(self, parameters: Parameters):
 
-        files = os.listdir(parameters.target_dir)
+        files = os.listdir(parameters.source)
         pseudo_random_generated = 0
         for file_name in files:
             if file_name == parameters.output_file:
                 continue
 
-            file_path = os.path.join(parameters.target_dir, file_name)
+            file_path = os.path.join(parameters.source, file_name)
             subsets = self.get_subsets(file_path)
             results = [([], 0)]  # list of all subsets with [([sub], cost)]
             constructive_method_name = ''
@@ -42,7 +42,7 @@ class Scp:
             cpu_executation_time = (start_cpu_time - end_cpu_time)
             # ** End CPU Time **
 
-            output_file = os.path.join(parameters.target_dir, parameters.output_file)
+            output_file = os.path.join(parameters.source, parameters.output_file)
             file_name, extension = os.path.splitext(file_name)
             write_to_file(file_name, constructive_method_name, pseudo_random_generated, result[1], cpu_executation_time, output_file)
 
