@@ -3,6 +3,7 @@ import sys
 
 from algorithms.config import Parameters
 from algorithms.scp import Scp
+from algorithms.scp_v2 import ScpV2
 from algorithms.setcover.constructive import *
 
 
@@ -64,8 +65,7 @@ def main(argv):
     if len(argv) <= 1:
         print_usage()
         return
-
-    scp = Scp()
+    scp = ScpV2()
     scp.process_instances(parameters)
 
 

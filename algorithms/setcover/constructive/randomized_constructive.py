@@ -28,4 +28,4 @@ def create_randomized_constructive(subsets_and_costs, pseudo_random):
                     number_of_covered += 1
         solution.append(local_solution)
 
-    return solution, sum(sub[1] for sub in solution)
+    return solution, sum(int(sub[1]) for sub in solution)
