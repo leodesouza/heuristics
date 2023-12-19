@@ -1,14 +1,21 @@
 import os
 import time
-from algorithms.setcover.constructive import randomized_constructive, greedy_constructive, weighted_greedy_constructive
+from algorithms.setcover.constructive import randomized_constructive, greedy_constructive, weighted_greedy_constructive, \
+    redundancy_elimination
 from algorithms.config import Parameters
 from algorithms.utils.pseudo_random_generator import lecuyer_rando
+from algorithms.setcover.local_search import create_local_search_solution
+from algorithms.setcover.metaheuristics.grasp import create_grasp_solution
+from algorithms.setcover.metaheuristics.iterated_local_search import create_iterated_local_search
+from algorithms.setcover.metaheuristics.simulated_annealing import create_simulated_annealing
 
 
-def write_to_file(instance_name, method_name, total_cost, cpu_time, output_file):
+def write_to_file(instance_name, constructive_method_name, constructive_total_weight,
+                  local_search, local_search_total_weigth,
+                  metaheuristic, metaheuristic_total_weight, cpu_time, output_file):
     with open(output_file, 'a', newline='') as file:
-        # file.writelines(f'{instance_name};{method_name};{pseudo_random_generated};{total_cost};{cpu_time}\n')
-        file.writelines(f'{instance_name};{method_name};{total_cost};{cpu_time}\n')
+        file.writelines(f'{instance_name};{constructive_method_name};{constructive_total_weight}'
+                        f';{local_search};{local_search_total_weigth};{metaheuristic};{metaheuristic_total_weight};{cpu_time}\n')
 
 
 class ScpV2:
@@ -30,22 +37,55 @@ class ScpV2:
             if 'hc1' in parameters.options:
                 constructive_method_name = 'HC1'
                 pseudo_random_generated = lecuyer_rando(parameters.seed)
-                result = randomized_constructive.create_randomized_constructive(subsets, pseudo_random_generated)
+                constructive_result = randomized_constructive.create_randomized_constructive(subsets,
+                                                                                             pseudo_random_generated)
+                constructive_total_weight = constructive_result[1]
             elif 'hc2' in parameters.options:
                 constructive_method_name = 'HC2'
-                result = greedy_constructive.create_greedy_constructive(subsets)
+                constructive_result = greedy_constructive.create_greedy_constructive(subsets)
+                constructive_total_weight = constructive_result[1]
             elif 'hc3' in parameters.options:
                 constructive_method_name = 'HC3'
-                result = weighted_greedy_constructive.create_wighted_greedy_constructive(subsets)
-            elif 're' in parameters.options:
-                pass
+                constructive_result = weighted_greedy_constructive.create_wighted_greedy_constructive(subsets)
+                constructive_total_weight = constructive_result[1]
+
+            if 're' in parameters.options:
+                constructive_result = redundancy_elimination.remove_rendundancy(constructive_result)
+
+            local_search_method_name = 0
+            local_search_total_weigth = 0
+            if 'localsearch' in parameters.options:
+                local_search_method_name = 1
+                local_search_total_result = create_local_search_solution(subsets, constructive_result[0], 5)
+                local_search_total_weigth = local_search_total_result[1]
+
+            # --localsearch --grasp --itlocalsearch --sa
+            metaheuristic_method_used = ''
+            if 'grasp' in parameters.options:
+                metaheuristic_method_used = 'GRASP'
+                metaheuristic_results = create_grasp_solution(subsets, constructive_result[0], 5)
+                metaheuristic_total_weight = metaheuristic_results[1]
+            elif 'itlocalsearch' in parameters.options:
+                metaheuristic_method_used = 'ILS'
+                metaheuristic_results = create_iterated_local_search(subsets, constructive_result[0], 5)
+                metaheuristic_total_weight = metaheuristic_results[1]
+            elif 'sa' in parameters.options:
+                metaheuristic_method_used = 'SA'
+                metaheuristic_results = create_simulated_annealing(subsets, constructive_result[0], 5)
+                metaheuristic_total_weight = metaheuristic_results[1]
+
             end_cpu_time = time.process_time()
             cpu_executation_time = (end_cpu_time - start_cpu_time)
             # ** End CPU Time **
 
             output_file = os.path.join(parameters.source, parameters.output_file)
             file_name, extension = os.path.splitext(file_name)
-            write_to_file(file_name, constructive_method_name, result[1], cpu_executation_time,
+
+            write_to_file(file_name, constructive_method_name, constructive_total_weight, local_search_method_name,
+                          local_search_total_weigth,
+                          metaheuristic_method_used,
+                          metaheuristic_total_weight,
+                          cpu_executation_time,
                           output_file)
 
     @staticmethod

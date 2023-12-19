@@ -51,7 +51,18 @@ def read_parameters(argv):
             i += 1
         elif argv[i] == "--re":
             parameters.options.append('re')
-            re = 1
+            i += 1
+        elif argv[i] == "--localsearch":
+            parameters.options.append('localsearch')
+            i += 1
+        elif argv[i] == "--grasp":
+            parameters.options.append('grasp')
+            i += 1
+        elif argv[i] == "--itlocalsearch":
+            parameters.options.append('itlocalsearch')
+            i += 1
+        elif argv[i] == "--sa":
+            parameters.options.append('sa')
             i += 1
         else:
             print(f"\nERROR: parameter {argv[i]} not recognized.\n")
