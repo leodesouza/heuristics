@@ -18,4 +18,4 @@ def create_greedy_constructive(subsets_and_costs):
 
         solution.append(current_subset)
 
-    return solution, sum(sub[1] for sub in solution)
+    return solution, sum(int(sub[1]) for sub in solution)

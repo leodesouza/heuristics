@@ -10,8 +10,8 @@ def create_wighted_greedy_constructive(subsets_and_costs):
     # cover_cost = 0
     subsets_cost_per_cover = []
     for sub in subsets_and_costs:
-        lower_number = min(len(sub[0]), sub[1])
-        bigger_number = max(len(sub[0]), sub[1])
+        lower_number = min(len(sub[0]), int(sub[1]))
+        bigger_number = max(len(sub[0]), int(sub[1]))
         cover_cost = bigger_number / lower_number
         subsets_cost_per_cover.append((sub[0], cover_cost))
 
