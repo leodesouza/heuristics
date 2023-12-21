@@ -5,7 +5,6 @@ import random
 
 
 def generate_pertubation(candidate_solution):
-
     solucao_perturbada = candidate_solution
     _list = list(solucao_perturbada)[0]
     solucao_perturbada = _list
@@ -22,17 +21,17 @@ def create_iterated_local_search(inicial_solution, max_iterations=100):
     current_solution = inicial_solution
     best_evaluation = float('inf')
     best_solution = []
-    candidate_solution = create_local_search_solution(current_solution, max_iterations)
+
     for _ in range(max_iterations):
         # pertubation = generate_pertubation(candidate_solution)
         # pertubation = list(pertubation)
         # candidate_solution = create_local_search_solution(pertubation, max_iterations=1)
+        candidate_solution = create_local_search_solution(inicial_solution, max_iterations)
         candidate_solution = candidate_solution[0]
         if isinstance(candidate_solution, tuple):
             candidate_solution = tuple(list(candidate_solution))
-
         if all(isinstance(item, int) for item in candidate_solution):
-            break;
+            break
         candidate_evaluation = evaluate(candidate_solution)
         if candidate_evaluation < best_evaluation:
             best_solution = candidate_solution

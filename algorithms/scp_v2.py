@@ -95,7 +95,7 @@ class ScpV2:
                 write_to_file('Inst.', 'm', 'n', 'Best', 'HC1', '+ER1',
                               f'{metaheuristic_method_used}1',
                               'HC2', '+ER2',
-                              f'{metaheuristic_method_used}1',
+                              f'{metaheuristic_method_used}2',
                               'HC3', '+ER3',
                               f'{metaheuristic_method_used}3',
                               'TEMPO(ms)', output_file)
