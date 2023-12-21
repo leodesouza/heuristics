@@ -1,4 +1,4 @@
-from algorithms.setcover.local_search import evaluate
+from solution_evaluation import evaluate
 
 
 def remove_rendundancy(solution):

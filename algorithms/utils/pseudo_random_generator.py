@@ -1,8 +1,7 @@
 # *************** L'Ecuyer random number generator ***************
 # pseudo random number generator
 
-def get_pseudo_random_used():
-    return lecuyer_rando()
+from config import x10, x11, x12, x20, x21, x22
 
 
 def lecuyer_rando(seed):
@@ -68,5 +67,5 @@ def generate_rand_permutation(n, pseudo_random):
     return p
 
 
-lecuyer_rando.x10, lecuyer_rando.x11, lecuyer_rando.x12 = 12345, 67890, 13579
-lecuyer_rando.x20, lecuyer_rando.x21, lecuyer_rando.x22 = 24680, 98765, 43210
+lecuyer_rando.x10, lecuyer_rando.x11, lecuyer_rando.x12 = x10, x11, x12
+lecuyer_rando.x20, lecuyer_rando.x21, lecuyer_rando.x22 = x20, x21, x22

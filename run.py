@@ -1,10 +1,8 @@
 import os
 import sys
 
-from algorithms.config import Parameters
-from algorithms.scp import Scp
+from config import Parameters, MAX_EXPERIMENTS_ITERATIONS
 from algorithms.scp_v2 import ScpV2
-from algorithms.setcover.constructive import *
 
 
 def print_usage():
@@ -77,7 +75,7 @@ def main(argv):
         print_usage()
         return
     scp = ScpV2()
-    scp.process_instances(parameters)
+    scp.process_instances(parameters, MAX_EXPERIMENTS_ITERATIONS)
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import math
 import random
 
-from algorithms.setcover.local_search import evaluate
+from solution_evaluation import evaluate
 
 
 def generate_neighborhood(subsets, solution):

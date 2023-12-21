@@ -1,15 +1,31 @@
-def evaluate(solution):
-    # loop and update the total weight
-    # covered = set()
-    total_weight = 0
-    for subset, weight in solution:
-        # covered |= set(subset)
-        total_weight += int(weight)
+from redundancy_elimination import remove_rendundancy
+from solution_evaluation import evaluate
 
-    return total_weight
+
+def generate_neighborhood_2(solution):
+    neighborhood = []
+
+    for sublist_index, sublist in enumerate(solution):
+        elements = sublist[0]  # Extracting elements from the sublist
+        label = sublist[1]  # Extracting the label
+        for i in range(len(elements)):
+            for j in range(i + 1, len(elements)):
+                new_elements = elements[:]  # Create a copy of the elements
+                # Swap elements within the same sublist
+                new_elements[i], new_elements[j] = new_elements[j], new_elements[i]
+                new_solution = solution[:]  # Create a copy of the solution
+                new_solution[sublist_index] = (new_elements, label)  # Update the sublist in the solution
+                neighborhood.append(new_solution)  # Add to the neighborhood
+
+    return neighborhood
 
 
 def generate_neighborhood(subsets, solution):
+    # neighborhood = []
+    # ordered = sorted(subsets, key=lambda x: len(x[0]), reverse=True)
+    # neighborhood.append(ordered)
+    # return neighborhood
+
     neighborhood = []
     for i, (subset, weight) in enumerate(solution):
         for j, (new_subset, new_weight) in enumerate(subsets):
@@ -21,7 +37,7 @@ def generate_neighborhood(subsets, solution):
     return neighborhood
 
 
-def create_local_search_solution(subsets, inicial_solution, max_iterations=1000):
+def create_local_search_solution(inicial_solution, max_iterations=1000):
     # ([([0, 1, 2], '3'), ([3, 4], '5'), ([3, 4], '5')], 13)
     current_solution = inicial_solution
     current_evaluation = evaluate(current_solution)
@@ -30,13 +46,9 @@ def create_local_search_solution(subsets, inicial_solution, max_iterations=1000)
         while iteration < max_iterations:
             best_neighbor = None
             best_neighbor_evaluation = current_evaluation
-
-            neighborhood = generate_neighborhood(subsets, current_solution)
+            neighborhood = generate_neighborhood_2(current_solution)
             for neighbor in neighborhood:
                 neighbor_evaluation = evaluate(neighbor)
-                # if type(best_neighbor_evaluation) is list or type(neighbor_evaluation) is list:
-                #     print("best_neighbor_evaluation", best_neighbor_evaluation)
-                #     print("neighbor_evaluation", neighbor_evaluation)
                 if neighbor_evaluation < best_neighbor_evaluation:
                     best_neighbor = neighbor
                     best_neighbor_evaluation = best_neighbor
@@ -50,10 +62,7 @@ def create_local_search_solution(subsets, inicial_solution, max_iterations=1000)
     except BaseException as e:
         print("Error", e)
 
-    return current_solution, current_evaluation
+    # ([([0, 1, 2], '3'), ([3, 4], '5'), ([3, 4], '5')], 13)
+    current_solution, current_evaluation = remove_rendundancy((current_solution, 0))
 
-# max_iterations = 1000
-# inicial_solution = []
-# best_solution = local_search_weighted(inicial_solution, max_iterations=1000)
-# evaluation = evaluate(best_solution)
-# print(------)
+    return current_solution, current_evaluation

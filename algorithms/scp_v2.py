@@ -1,8 +1,7 @@
 import os
 import time
-from algorithms.setcover.constructive import randomized_constructive, greedy_constructive, weighted_greedy_constructive, \
-    redundancy_elimination
-from algorithms.config import Parameters
+from algorithms.setcover.constructive import randomized_constructive, greedy_constructive, \
+                                        weighted_greedy_constructive, redundancy_elimination
 from algorithms.utils.pseudo_random_generator import lecuyer_rando
 from algorithms.setcover.metaheuristics.grasp import create_grasp_solution
 from algorithms.setcover.metaheuristics.iterated_local_search import create_iterated_local_search
@@ -19,7 +18,7 @@ def write_to_file(instance_name, m, n, best, hc1_weight, hc1_re, mh1_weight,
 
 class ScpV2:
 
-    def process_instances(self, parameters: Parameters):
+    def process_instances(self, parameters, _max_experiments_iteration):
 
         files = os.listdir(parameters.source)
         already_wrote_head = False
@@ -61,43 +60,45 @@ class ScpV2:
                 # metaheuristic_results = create_grasp_solution(subsets, constructive_result[0], 5)
                 # metaheuristic_total_weight = metaheuristic_results[1]
 
-                result1 = create_grasp_solution(subsets, constructive_result_1[0], 5)
-                result2 = create_grasp_solution(subsets, constructive_result_2[0], 5)
-                result3 = create_grasp_solution(subsets, constructive_result_3[0], 5)
+                result1 = create_grasp_solution(subsets, constructive_result_1[0], _max_experiments_iteration)
+                result2 = create_grasp_solution(subsets, constructive_result_2[0], _max_experiments_iteration)
+                result3 = create_grasp_solution(subsets, constructive_result_3[0], _max_experiments_iteration)
                 mh1_weight = result1[1]
                 mh2_weight = result2[1]
                 mh3_weight = result3[1]
             elif 'itlocalsearch' in parameters.options:
                 metaheuristic_method_used = 'ILS'
-                result1 = create_iterated_local_search(subsets, constructive_result_1[0], 5)
-                result2 = create_iterated_local_search(subsets, constructive_result_2[0], 5)
-                result3 = create_iterated_local_search(subsets, constructive_result_3[0], 5)
+                result1 = create_iterated_local_search(constructive_result_1[0], _max_experiments_iteration)
+                result2 = create_iterated_local_search(constructive_result_2[0], _max_experiments_iteration)
+                result3 = create_iterated_local_search(constructive_result_3[0], _max_experiments_iteration)
                 mh1_weight = result1[1]
                 mh2_weight = result2[1]
                 mh3_weight = result3[1]
 
             elif 'sa' in parameters.options:
                 metaheuristic_method_used = 'SA'
-                result1 = create_simulated_annealing(subsets, constructive_result_1[0], 5)
-                result2 = create_simulated_annealing(subsets, constructive_result_2[0], 5)
-                result3 = create_simulated_annealing(subsets, constructive_result_3[0], 5)
+                result1 = create_simulated_annealing(subsets, constructive_result_1[0], _max_experiments_iteration)
+                result2 = create_simulated_annealing(subsets, constructive_result_2[0], _max_experiments_iteration)
+                result3 = create_simulated_annealing(subsets, constructive_result_3[0], _max_experiments_iteration)
                 mh1_weight = result1[1]
                 mh2_weight = result2[1]
                 mh3_weight = result3[1]
 
             end_cpu_time = time.process_time()
-            cpu_executation_time = (end_cpu_time - start_cpu_time)
+            cpu_executation_time = round((end_cpu_time - start_cpu_time) / 1.0, 1) * 1000
+
             # ** End CPU Time **
 
             output_file = os.path.join(parameters.source, parameters.output_file)
             file_name, extension = os.path.splitext(file_name)
             if not already_wrote_head:
-                write_to_file('Inst.', 'm', 'n', 'Best', 'HC1', '+ER1', f'{metaheuristic_method_used}1',
+                write_to_file('Inst.', 'm', 'n', 'Best', 'HC1', '+ER1',
+                              f'{metaheuristic_method_used}1',
                               'HC2', '+ER2',
                               f'{metaheuristic_method_used}1',
                               'HC3', '+ER3',
                               f'{metaheuristic_method_used}3',
-                              'TEMPO', output_file)
+                              'TEMPO(ms)', output_file)
                 already_wrote_head = True
 
             best_value = 0
