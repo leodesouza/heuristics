@@ -9,12 +9,7 @@ def write_to_file(instance_name, m, n, best, hc1_weight, hc1_re, mh1_weight,
                         f'{hc3_weight};{hc3_re};{mh3_weight};{cpu_time}\n')
 
 
-def add_best_know_values_to_csv():
-    best_know_path = '/home/leonardosouza/projects/heuristics_files/scp/best-known.txt'
-    # report = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_GRASP.csv'
-    # output = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_GRASP_2.csv'
-    report = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_SA.csv'
-    output = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_SA_2.csv'
+def add_best_know_values_to_csv(best_know_path, report, output):
     best_know = []
     with open(best_know_path, mode='r') as file:
         csv_reader = csv.reader(file)
@@ -55,4 +50,3 @@ def add_best_know_values_to_csv():
 
 if __name__ == '__main__':
     add_best_know_values_to_csv()
-    # calculate_percentation_deviation()
