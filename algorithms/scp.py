@@ -24,11 +24,11 @@ class Scp:
             subsets = self.get_subsets(file_path)
             results = [([], 0)]  # list of all subsets with [([sub], cost)]
             constructive_method_name = ''
+            pseudo_random_generated = lecuyer_rando(parameters.seed)
             # ** Start CPU Time **
             start_cpu_time = time.process_time()
             if 'hc1' in parameters.options:
                 constructive_method_name = 'HC1'
-                pseudo_random_generated = lecuyer_rando(parameters.seed)
                 result = randomized_constructive.create_randomized_constructive(subsets, pseudo_random_generated)
             elif 'hc2' in parameters.options:
                 constructive_method_name = 'HC2'

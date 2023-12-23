@@ -4,7 +4,7 @@
 from config import x10, x11, x12, x20, x21, x22
 
 
-def lecuyer_rando(seed):
+def lecuyer_rando(seed=None):
     if seed is not None and seed > 0:
         lecuyer_rando.x12 += seed
     m = 2147483647

@@ -30,13 +30,13 @@ class ScpV2:
             n = 0  # subsets
             file_path = os.path.join(parameters.source, file_name)
             m, n, subsets = self.get_subsets(file_path)
+            pseudo_random = lecuyer_rando(parameters.seed)
 
             # ** Start CPU Time **
             start_cpu_time = time.process_time()
 
             if 'hc1' in parameters.options:
-                random = lecuyer_rando(parameters.seed)
-                constructive_result_1 = randomized_constructive.create_randomized_constructive(subsets, random)
+                constructive_result_1 = randomized_constructive.create_randomized_constructive(subsets, pseudo_random)
                 hc1_weight = constructive_result_1[1]
                 constructive_result_1 = redundancy_elimination.remove_rendundancy(constructive_result_1)
                 hc1_re = constructive_result_1[1]
@@ -60,9 +60,9 @@ class ScpV2:
                 # metaheuristic_results = create_grasp_solution(subsets, constructive_result[0], 5)
                 # metaheuristic_total_weight = metaheuristic_results[1]
 
-                result1 = create_grasp_solution(subsets, constructive_result_1[0], _max_experiments_iteration)
-                result2 = create_grasp_solution(subsets, constructive_result_2[0], _max_experiments_iteration)
-                result3 = create_grasp_solution(subsets, constructive_result_3[0], _max_experiments_iteration)
+                result1 = create_grasp_solution(subsets, constructive_result_1[0], pseudo_random, _max_experiments_iteration)
+                result2 = create_grasp_solution(subsets, constructive_result_2[0], pseudo_random, _max_experiments_iteration)
+                result3 = create_grasp_solution(subsets, constructive_result_3[0], pseudo_random, _max_experiments_iteration)
                 mh1_weight = result1[1]
                 mh2_weight = result2[1]
                 mh3_weight = result3[1]
@@ -109,71 +109,75 @@ class ScpV2:
 
     @staticmethod
     def get_subsets(scp_file):
-        n = 0
-        m = 0
-        rows = []  # rows[i] that are covered by column i
-        col = []  # col[i] columns that cover row i
-        ncol = []  # ncol[i] number of columns that cover row i
-        nrow = []  # nrow[i] number of rows that are covered by column i
-        cost = []  # cost[i] cost of column i
-        scp_file = scp_file
-        with open(scp_file, 'r') as file:
+        try:
+            n = 0
+            m = 0
+            rows = []  # rows[i] that are covered by column i
+            col = []  # col[i] columns that cover row i
+            ncol = []  # ncol[i] number of columns that cover row i
+            nrow = []  # nrow[i] number of rows that are covered by column i
+            cost = []  # cost[i] cost of column i
+            scp_file = scp_file
+            with open(scp_file, 'r') as file:
 
-            rows_columns_number = list(map(int, file.readline().split()))
+                rows_columns_number = list(map(int, file.readline().split()))
 
-            m = rows_columns_number[0]  # number of elements
-            n = rows_columns_number[1]  # number of subsets
+                m = rows_columns_number[0]  # number of elements
+                n = rows_columns_number[1]  # number of subsets
 
-            # reading all costs
-            has_read_all_costs = False
-            number_subets_that_cover_element = 0
-            while not has_read_all_costs:
-                items = file.readline().split()
-                if len(items) == 1:
-                    has_read_all_costs = True
-                    number_subets_that_cover_element = items[0]
-                    continue
-                cost.extend(items)
+                # reading all costs
+                has_read_all_costs = False
+                number_subets_that_cover_element = 0
+                while not has_read_all_costs:
+                    items = file.readline().split()
+                    if len(items) == 1:
+                        has_read_all_costs = True
+                        number_subets_that_cover_element = items[0]
+                        continue
+                    cost.extend(items)
 
-            # reading all subsets
-            number_subets_that_cover_element = int(number_subets_that_cover_element)
-            ncol.append(number_subets_that_cover_element)
-            has_read_all_subsets = False
-            count_read = 1
-            col.append([])
-            aux = []
-            while count_read < m:
-                line = file.readline()
-                if not line:
-                    break
-                inline_subsets = line.split()
+                # reading all subsets
+                number_subets_that_cover_element = int(number_subets_that_cover_element)
+                ncol.append(number_subets_that_cover_element)
+                has_read_all_subsets = False
+                count_read = 1
+                col.append([])
+                aux = []
+                while count_read < m:
+                    line = file.readline()
+                    if not line:
+                        break
+                    inline_subsets = line.split()
 
-                for subset in inline_subsets:
-                    if len(col[-1]) < number_subets_that_cover_element:
-                        col[-1].append(int(subset) - 1)
-                    else:
-                        # [subs for subs in subsets_and_costs if current in subs[0]]
-                        # jj = [x for x in subset if x not in col]
-                        number_subets_that_cover_element = int(subset)
-                        ncol.append(number_subets_that_cover_element)
-                        col.append([])
+                    for subset in inline_subsets:
+                        if len(col[-1]) < number_subets_that_cover_element:
+                            col[-1].append(int(subset) - 1)
+                        else:
+                            # [subs for subs in subsets_and_costs if current in subs[0]]
+                            # jj = [x for x in subset if x not in col]
+                            number_subets_that_cover_element = int(subset)
+                            ncol.append(number_subets_that_cover_element)
+                            col.append([])
 
-            # Info of rows that are covered by each column
-            rows = [[] for _ in range(n)]
-            nrow = [0] * n
-            k = [0] * n
+                # Info of rows that are covered by each column
+                rows = [[] for _ in range(n)]
+                nrow = [0] * n
+                k = [0] * n
 
-            for i in range(m):
-                for h in range(ncol[i]):
-                    nrow[col[i][h]] += 1
+                for i in range(m):
+                    for h in range(ncol[i]):
+                        nrow[col[i][h]] += 1
 
-            for j in range(n):
-                rows[j] = [0] * nrow[j]
-                k[j] = 0
+                for j in range(n):
+                    rows[j] = [0] * nrow[j]
+                    k[j] = 0
 
-            for i in range(m):
-                for h in range(ncol[i]):
-                    rows[col[i][h]][k[col[i][h]]] = i
-                    k[col[i][h]] += 1
+                for i in range(m):
+                    for h in range(ncol[i]):
+                        rows[col[i][h]][k[col[i][h]]] = i
+                        k[col[i][h]] += 1
+        except BaseException as e:
+            print(f'Error:{scp_file}')
+            print(e)
 
         return m, n, [(rows[i], cost[i]) for i in range(len(rows))]

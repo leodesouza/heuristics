@@ -5,36 +5,22 @@ import random
 
 
 def generate_pertubation(candidate_solution):
-    solucao_perturbada = candidate_solution
-    _list = list(solucao_perturbada)[0]
-    solucao_perturbada = _list
-    if not isinstance(solucao_perturbada, tuple) and len(solucao_perturbada) >= 2:
-        indice1 = random.randint(0, len(solucao_perturbada) - 2)
-        indice2 = indice1 + 1
-        # swap two adjacent elements, creating the double-bridge
-        solucao_perturbada[indice1], solucao_perturbada[indice2] = solucao_perturbada[indice2], solucao_perturbada[
-            indice1]
-    return solucao_perturbada
-
+    index1, index2 = random.sample(range(len(candidate_solution)), 2)
+    candidate_solution[index1], candidate_solution[index2] = candidate_solution[index2], candidate_solution[index1]
+    return candidate_solution
 
 def create_iterated_local_search(inicial_solution, max_iterations=100):
     current_solution = inicial_solution
-    best_evaluation = float('inf')
-    best_solution = []
-
+    candidate_solution = create_local_search_solution(inicial_solution, max_iterations)
+    best_evaluation = evaluate(inicial_solution)
     for _ in range(max_iterations):
-        # pertubation = generate_pertubation(candidate_solution)
-        # pertubation = list(pertubation)
-        # candidate_solution = create_local_search_solution(pertubation, max_iterations=1)
-        candidate_solution = create_local_search_solution(inicial_solution, max_iterations)
-        candidate_solution = candidate_solution[0]
-        if isinstance(candidate_solution, tuple):
-            candidate_solution = tuple(list(candidate_solution))
-        if all(isinstance(item, int) for item in candidate_solution):
-            break
-        candidate_evaluation = evaluate(candidate_solution)
+        pertubation = generate_pertubation(candidate_solution[0])
+        candidate_solution = create_local_search_solution(pertubation, max_iterations=1)
+        candidate_solution_ = candidate_solution[0]
+        candidate_evaluation = evaluate(candidate_solution_)
         if candidate_evaluation < best_evaluation:
-            best_solution = candidate_solution
+            best_solution = candidate_solution_
             best_evaluation = candidate_evaluation
+            current_solution = best_solution
 
-    return best_solution, candidate_evaluation
+    return current_solution, candidate_evaluation
