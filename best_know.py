@@ -13,8 +13,8 @@ def add_best_know_values_to_csv():
     best_know_path = '/home/leonardosouza/projects/heuristics_files/scp/best-known.txt'
     # report = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_GRASP.csv'
     # output = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_GRASP_2.csv'
-    report = '/home/leonardosouza/projects/heuristics_files/scp/output_NRE_SA.csv'
-    output = '/home/leonardosouza/projects/heuristics_files/scp/output_NRE_SA_2.csv'
+    report = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_SA.csv'
+    output = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_SA_2.csv'
     best_know = []
     with open(best_know_path, mode='r') as file:
         csv_reader = csv.reader(file)
@@ -39,48 +39,6 @@ def add_best_know_values_to_csv():
         inst = inst.upper()
         for b in best_know:
             if 'NR' in b[0]:
-                b_inst = str(b[0]).replace('.', '')
-                best_value = b[1]
-                if inst == b_inst:
-                    line[3] = best_value
-                    new_report.append(line)
-                    continue
-
-    with open(output, mode='w', newline='') as file:
-        csv_writer = csv.writer(file, delimiter=';')
-        for line in new_report:
-            csv_writer.writerow(line)
-
-
-def calculate_percentation_deviation():
-    best_know_path = '/home/leonardosouza/projects/heuristics_files/scp/best-known.txt'
-    # report = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_GRASP.csv'
-    # output = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_GRASP_2.csv'
-    report = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_GRASP.csv'
-    output = '/home/leonardosouza/projects/heuristics_files/scp/output_SCP_GRASP_2.csv'
-    best_know = []
-    with open(best_know_path, mode='r') as file:
-        csv_reader = csv.reader(file)
-        for row in csv_reader:
-            _row = row[0].rstrip(' ').split(' ')
-            best_know.append(_row)
-
-    report_lines = []
-    header = []
-    with open(report, mode='r') as file:
-        csv_reader = csv.reader(file)
-        for row in csv_reader:
-            if 'Inst.' in row[0]:
-                header = row
-                continue
-            report_lines.append(row[0].split(';'))
-
-    new_report = [header]
-    for line in report_lines:
-        inst = str(line[0]).replace('scp', '')
-        inst = inst.upper()
-        for b in best_know:
-            if 'NR' in b[0]:
                 continue
             b_inst = str(b[0]).replace('.', '')
             best_value = b[1]
@@ -96,5 +54,5 @@ def calculate_percentation_deviation():
 
 
 if __name__ == '__main__':
-    # add_best_know_values_to_csv()
-    calculate_percentation_deviation()
+    add_best_know_values_to_csv()
+    # calculate_percentation_deviation()
