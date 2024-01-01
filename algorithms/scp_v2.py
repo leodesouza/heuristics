@@ -1,7 +1,7 @@
 import os
 import time
 from algorithms.setcover.constructive import randomized_constructive, greedy_constructive, \
-                                        weighted_greedy_constructive, redundancy_elimination
+    weighted_greedy_constructive, redundancy_elimination
 from algorithms.utils.pseudo_random_generator import lecuyer_rando
 from algorithms.setcover.metaheuristics.grasp import create_grasp_solution
 from algorithms.setcover.metaheuristics.iterated_local_search import create_iterated_local_search
@@ -34,24 +34,27 @@ class ScpV2:
 
             # ** Start CPU Time **
             start_cpu_time = time.process_time()
+            hc1_re = 0
+            hc2_re = 0
+            hc3_re = 0
 
             if 'hc1' in parameters.options:
                 constructive_result_1 = randomized_constructive.create_randomized_constructive(subsets, pseudo_random)
                 hc1_weight = constructive_result_1[1]
-                constructive_result_1 = redundancy_elimination.remove_rendundancy(constructive_result_1)
-                hc1_re = constructive_result_1[1]
             if 'hc2' in parameters.options:
                 constructive_result_2 = greedy_constructive.create_greedy_constructive(subsets)
                 hc2_weight = constructive_result_2[1]
-                constructive_result_2 = redundancy_elimination.remove_rendundancy(constructive_result_2)
-                hc2_re = constructive_result_2[1]
 
             if 'hc3' in parameters.options:
                 constructive_result_3 = weighted_greedy_constructive.create_wighted_greedy_constructive(subsets)
-                # constructive_total_weight = constructive_result_3[1]
                 hc3_weight = constructive_result_3[1]
+
+            if 're' in parameters.options:
+                constructive_result_1 = redundancy_elimination.remove_rendundancy(constructive_result_1)
+                hc1_re = constructive_result_1[1]
+                constructive_result_2 = redundancy_elimination.remove_rendundancy(constructive_result_2)
+                hc2_re = constructive_result_2[1]
                 constructive_result_3 = redundancy_elimination.remove_rendundancy(constructive_result_3)
-                # hc3_re = constructive_total_weight[1]
                 hc3_re = constructive_result_3[1]
 
             metaheuristic_method_used = ''
@@ -60,9 +63,12 @@ class ScpV2:
                 # metaheuristic_results = create_grasp_solution(subsets, constructive_result[0], 5)
                 # metaheuristic_total_weight = metaheuristic_results[1]
 
-                result1 = create_grasp_solution(subsets, constructive_result_1[0], pseudo_random, _max_experiments_iteration)
-                result2 = create_grasp_solution(subsets, constructive_result_2[0], pseudo_random, _max_experiments_iteration)
-                result3 = create_grasp_solution(subsets, constructive_result_3[0], pseudo_random, _max_experiments_iteration)
+                result1 = create_grasp_solution(subsets, constructive_result_1[0], pseudo_random,
+                                                _max_experiments_iteration)
+                result2 = create_grasp_solution(subsets, constructive_result_2[0], pseudo_random,
+                                                _max_experiments_iteration)
+                result3 = create_grasp_solution(subsets, constructive_result_3[0], pseudo_random,
+                                                _max_experiments_iteration)
                 mh1_weight = result1[1]
                 mh2_weight = result2[1]
                 mh3_weight = result3[1]
