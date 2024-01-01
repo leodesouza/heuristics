@@ -1,5 +1,4 @@
 from algorithms.utils.pseudo_random_generator import generate_rand_permutation
-from redundancy_elimination import remove_rendundancy
 
 
 def create_randomized_constructive(subsets_and_costs, pseudo_random):
@@ -11,28 +10,16 @@ def create_randomized_constructive(subsets_and_costs, pseudo_random):
     elements = list(elements)
 
     shuffled_vector = iter(generate_rand_permutation(len(elements), pseudo_random))
-    number_of_covered = 0
     solution = []
-    number_elements = len(elements)
-
     while len(aux_elements) > 0:
         random_index = next(shuffled_vector)
         current = elements[random_index]
         aux_elements.remove(current)
-        subsets_that_cover_current = [subs for subs in subsets_and_costs if current in subs[0] and not any(e in solution for e in subs)]
+        subsets_that_cover_current = [subs for subs in subsets_and_costs if
+                                      current in subs[0] and not any(e in solution for e in subs)]
         rand_permutation_of_subsets = generate_rand_permutation(len(subsets_that_cover_current), pseudo_random)
         index_of_first_subset = rand_permutation_of_subsets[0]
-        # local_solution variable is not relate to local search algorithm
         local_solution = subsets_that_cover_current[index_of_first_subset]
-        # number_of_covered += 1
-        # for e in local_solution:
-        #     if e != current:
-        #         found = any(e in sublist for sublist in solution)
-        #         if not found:
-        #             number_of_covered += 1
         solution.append(local_solution)
-
-    # solution = remove_rendundancy((solution, 0))
-    # return solution
 
     return solution, sum(int(sub[1]) for sub in solution)
