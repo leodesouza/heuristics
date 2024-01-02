@@ -9,6 +9,7 @@ def generate_pertubation(candidate_solution):
     candidate_solution[index1], candidate_solution[index2] = candidate_solution[index2], candidate_solution[index1]
     return candidate_solution
 
+
 def create_iterated_local_search(inicial_solution, max_iterations=100):
     current_solution = inicial_solution
     candidate_solution = create_local_search_solution(inicial_solution, max_iterations)

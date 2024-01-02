@@ -31,7 +31,7 @@ def generate_neighborhood(subsets, solution):
         for j, (new_subset, new_weight) in enumerate(subsets):
             if j != i and not set(new_subset) - set(subset):
                 new_solution = solution[:]
-                new_solution[i] = (new_subset, new_weight)
+                new_solution[i] = (new_subset, int(new_weight))
                 neighborhood.append(new_solution)
 
     return neighborhood
@@ -51,18 +51,15 @@ def create_local_search_solution(inicial_solution, max_iterations=1000):
                 neighbor_evaluation = evaluate(neighbor)
                 if neighbor_evaluation < best_neighbor_evaluation:
                     best_neighbor = neighbor
-                    best_neighbor_evaluation = best_neighbor
+                    best_neighbor_evaluation = evaluate(best_neighbor)
 
             if best_neighbor_evaluation < current_evaluation:
                 current_solution = best_neighbor
                 current_evaluation = best_neighbor_evaluation
-            else:
                 break
+
             iteration += 1
     except BaseException as e:
         print("Error", e)
-
-    # ([([0, 1, 2], '3'), ([3, 4], '5'), ([3, 4], '5')], 13)
-    current_solution, current_evaluation = remove_rendundancy((current_solution, 0))
 
     return current_solution, current_evaluation
